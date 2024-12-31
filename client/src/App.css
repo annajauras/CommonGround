@@ -1,0 +1,341 @@
+/* Sets default styles for the entire document */
+body {
+  font-family: Garamond;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f4f4;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-justify: inter-word;
+}
+
+/* Main content area within the page */
+#page-body {
+  max-width: 800px;
+  margin: 1em;
+  text-align: center;
+  align-items: center;
+}
+
+/* Header styles */
+h1 {
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #555;
+  margin: 20px 0;
+  text-align: center;
+}
+
+h3, h4 {
+  font-size: 1.4rem;
+  color: #555;
+  text-align: center;
+}
+
+h4 {
+  color: #3b402b;
+}
+
+/* Paragraph styling */
+p {
+  line-height: 1.6;
+  margin: 20px;
+  text-align: justify;
+  width: auto;
+  font-family: Helvetica;
+}
+
+/* Button styles for default and active states */
+button {
+  padding: 18px;
+  font-family: Helvetica;
+  font-size: 18px;
+  background-color: #464b37;
+  color: white;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-top: 12px;
+  width: 200px;
+  text-align: center;
+  margin: 10px;
+}
+
+button:hover {
+  background-color: #3b402b;
+}
+
+button:active {
+  background-color: #3b402b;
+}
+
+
+/* Layout for the home page */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100vh;
+  padding: 16px;
+}
+
+/* Create and Join Session forms styling on Home Page */
+.create-session, .join-session {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  align-items: center;
+}
+
+.create-session input, .join-session input {
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Form container styling */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+
+/* Styling for session code */
+.session-code {
+  text-align: center;
+  width: 100%;
+  align-items: center;
+}
+
+/* Button container layout */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/*Admin Join Page Styles (player-list in PrimaryQPage too)*/
+
+/* Styling for the session container */
+.session-container {
+  display: flex;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  text-align: center;
+  margin: 5px;
+  width: 50%;
+  flex-grow: 0;
+  align-items: center;
+  box-sizing: border-box;
+}
+/* Player list container layout */
+
+.player-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  text-align: center;
+  margin: 0 auto;
+  width: 75%;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Player list layout with grid for dynamic columns */
+.players-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+/* Players-List specifications with conditions*/
+.players-list h4 {
+  text-align: center;
+  margin: 8px 0;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.players-list:has(h4:nth-child(n+2)) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.players-list:has(h4:nth-child(n+3)) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Navigation Icon Styles */
+.nav-icon {
+  position: fixed;
+  bottom: 20px; /* Positions icon near bottom */
+  width: 50px;
+  height: 50px;
+  background-color: #464b37; /* Icon background */
+  border-radius: 50%; /* Circular icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.home-icon {
+  left: 20px; /* Left-positioned home icon */
+}
+
+.about-icon {
+  right: 20px; /* Right-positioned about icon */
+}
+
+.nav-icon img {
+  width: 30px;
+  height: 30px;
+}
+
+.nav-icon:hover {
+  background-color: #3b402b; /* Hover color change */
+}
+
+/* Container styles for different pages */
+
+/* Styling for the main container */
+.main-container {
+  align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #ffffffa1;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.prompt-page {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 16px;
+}
+
+.agree-page-container, .disagree-page-container, .primary-page-container, .wait-page-container {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin: 20px auto;
+}
+
+.agree-page-container {
+  background-color: #708a9b;
+}
+
+.disagree-page-container {
+  background-color: #8b7298;
+}
+
+.agree-page-container h1, .agree-page-container h2, .agree-page-container h3 {
+  color: #f4f4f4;
+}
+
+.disagree-page-container h1, .disagree-page-container h2, .disagree-page-container h3 {
+  color: #f4f4f4;
+}
+
+.primary-page-container {
+  background-color: #f4f4f4;
+}
+
+/* Countdown timer styling */
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  width: 100px;
+  height: 100px;
+  background: conic-gradient(#4e4c4c calc(var(--timeLeft, 1) * 24deg), #acacac 0deg);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: pulse 1s infinite ease-in-out;
+}
+
+/* Timer circle styling */
+.timer-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  color: #212020;
+  font-weight: bold;
+  font-size: 24px;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Media query for responsiveness */
+@media (max-width: 600px) {
+  .home-page {
+    padding: 10px;
+  }
+
+  .form-container {
+    max-width: 90%;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h3, h4 {
+    font-size: 1rem;
+  }
+}
