@@ -19,18 +19,19 @@ const PrimaryQPage = () => {
   const [answerListComplete, setAnswerListComplete] = useState(false);
   const [agreeRoundReset, setAgreeRoundReset] = useState(false);
   const [disagreeRoundReset, setDisagreeRoundReset] = useState(false);
+  const [playerList, setPlayerList] = useState(playerArray);
 
   //Navigates to approprate page based on agreement, disagreement, and player role
   const navigateToFollowUp = () => {
     console.log(agreePlayerList);
     if (admin === undefined && disagreePlayerList.some(p => p.playerID === player.playerID)) {
-      navigate(`/disagree/${player.playerID}/${question.id}`, { state: { session: session, player: player, playerArray: playerArray, disagreePlayerList: disagreePlayerList, agreePlayerList: agreePlayerList, question: question, lastQuestion: lastQuestion, firstRound: firstRound} });
+      navigate(`/disagree/${player.playerID}/${question.id}`, { state: { session: session, player: player, playerArray: playerList, disagreePlayerList: disagreePlayerList, agreePlayerList: agreePlayerList, question: question, lastQuestion: lastQuestion, firstRound: firstRound} });
     }
     if (admin === undefined && agreePlayerList.some(p => p.playerID === player.playerID)) {
-      navigate(`/agree/${player.playerID}/${question.id}`, { state: { session: session, player: player, playerArray: playerArray, agreePlayerList: agreePlayerList, disagreePlayerList: disagreePlayerList, question: question, lastQuestion: lastQuestion, firstRound: firstRound } });
+      navigate(`/agree/${player.playerID}/${question.id}`, { state: { session: session, player: player, playerArray: playerList, agreePlayerList: agreePlayerList, disagreePlayerList: disagreePlayerList, question: question, lastQuestion: lastQuestion, firstRound: firstRound } });
     }
     if(admin !== undefined){
-      navigate(`/wait/${admin}`, { state: { admin: admin, session: session, playerArray: playerArray, question: question, firstRound: firstRound, availableQuestionsThisRound: availableQuestionsThisRound, nextRoundQuestion: nextRoundQuestion, lastQuestion: lastQuestion, agreePlayerList: agreePlayerList, disagreePlayerList: disagreePlayerList}});
+      navigate(`/wait/${admin}`, { state: { admin: admin, session: session, playerArray: playerList, question: question, firstRound: firstRound, availableQuestionsThisRound: availableQuestionsThisRound, nextRoundQuestion: nextRoundQuestion, lastQuestion: lastQuestion, agreePlayerList: agreePlayerList, disagreePlayerList: disagreePlayerList}});
     }
   }
   //Tells server to clear agree list from previous round
@@ -126,7 +127,7 @@ const PrimaryQPage = () => {
 //Checks to see if all players have answered. Notifies server when yes.
 useEffect(() => {
   if (agreePlayerList && disagreePlayerList) {
-      if (agreePlayerList.length + disagreePlayerList.length === playerArray.length) {
+      if (agreePlayerList.length + disagreePlayerList.length === playerList.length) {
           socket.emit("follow_up_start", session);
       }
   }
@@ -170,6 +171,18 @@ useEffect(() => {
 
     return () => socket.off("session_ended");
   }, [socket, session, navigate]);
+
+//Updates player list in real time  (in the case that players leave)
+  useEffect(() => {
+    socket.on("get_player_array", (newPlayersList) => {
+      setPlayerList(newPlayersList);
+    });
+    return () => {
+      socket.off("get_player_array");
+  };
+  
+  }, [socket]);
+
   
   //UI based on role and answer
   if (!player && !admin) {
@@ -191,7 +204,7 @@ useEffect(() => {
         return (
           <div className="primary-page-container">
             <h2>Agreed:</h2>
-            <div className="primary-page-container">
+            <div className="players-list">
             {agreePlayerList.map((player, index) => (
               <h4 key={index}>{player.playerName}</h4>
             ))}

@@ -1,4 +1,14 @@
+import { useEffect } from "react";
+import { useSocket } from "../components/SocketContext";
 const AboutPage = () => {
+
+  const socket = useSocket();
+
+  //If the player or admin navigates away from game they are disconnected from session.
+    useEffect(() => {
+    socket.disconnect(); 
+  }, [socket]);
+
   return (
   <>
   <div className="main-container">

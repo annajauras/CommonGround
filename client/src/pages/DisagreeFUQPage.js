@@ -92,6 +92,22 @@ const DisagreeFUQPage = () => {
     
   }, [socket]);
 
+   //Checks if session has ended due to players/admin leaving the game
+    useEffect(() => {
+      socket.on("session_ended", (endedSessionId) => {
+        if (endedSessionId === session) {
+          // Show a confirmation dialog; navigate only if the user clicks "OK"
+          if (window.confirm("The session has ended. Click OK to return to the home page.")) {
+            navigate("/");
+          }
+        }
+      });
+      
+  
+      return () => socket.off("session_ended");
+    }, [socket, session, navigate]);
+
+
   if (!countdownFinished) {
     return (
       <>

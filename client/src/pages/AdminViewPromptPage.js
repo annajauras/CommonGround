@@ -19,6 +19,7 @@ const AdminViewPromptPage = () => {
   const [thisRoundCurrentQuestion, setThisRoundCurrentQuestion] = useState(nextRoundQuestion); // Current question for every round after the first round
   const [lastQuestion, setLastQuestion] = useState(false); // Booleen to track if it is the last question
   const [endGameStatus, setEndGameStatus] = useState(false); // Boolean to track if game has been ended
+  const [currentPlayerArray, setCurrentPlayerArray] = useState(playerArray);
   
   // Generates a random question from the available pool
   const generateQuestion = () => {
@@ -32,23 +33,23 @@ const AdminViewPromptPage = () => {
   const navigateToPrimaryQuestion = () => {
     if (admin !== undefined && questionApproved){
       console.log("last question:" + lastQuestion);
-      console.log("Navigating to:", `/primary/${admin}/${currentQuestion.id}`, { state: { admin, session, playerArray, firstRound: firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion:lastQuestion } });
-      return navigate(`/primary/${admin}/${currentQuestion.id}`, { state: { admin: admin, session: session, playerArray: playerArray, firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion: lastQuestion}});
+      console.log("Navigating to:", `/primary/${admin}/${currentQuestion.id}`, { state: { admin, session, playerArray: currentPlayerArray, firstRound: firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion:lastQuestion } });
+      return navigate(`/primary/${admin}/${currentQuestion.id}`, { state: { admin: admin, session: session, playerArray: currentPlayerArray, firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion: lastQuestion}});
     }
     if (player !== undefined && questionApproved) {
       console.log("last question:" + lastQuestion);
-      return navigate(`/primary/${player.playerID}/${currentQuestion.id}`, { state: { session: session, player: player, playerArray: playerArray, firstRound: firstRound, lastQuestion: lastQuestion } });
+      return navigate(`/primary/${player.playerID}/${currentQuestion.id}`, { state: { session: session, player: player, playerArray: currentPlayerArray, firstRound: firstRound, lastQuestion: lastQuestion } });
     }
   }
   // Navigates to the question view based on role (admin or player) and approval status after the first round
   const navigateToPrimaryQuestionThisRound = () => {
     if (admin !== undefined && questionApproved){
       console.log("last question:" + lastQuestion);
-      return navigate(`/primary/${admin}/${thisRoundCurrentQuestion.id}`, { state: { admin: admin, session: session, playerArray: playerArray, firstRound: firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion: lastQuestion}});
+      return navigate(`/primary/${admin}/${thisRoundCurrentQuestion.id}`, { state: { admin: admin, session: session, playerArray: currentPlayerArray, firstRound: firstRound, availableQuestionsThisRound: thisRoundAvailableQuestions, nextRoundQuestion: nextRoundCurrentQuestion, lastQuestion: lastQuestion}});
     }
     if (player !== undefined && questionApproved) {
       console.log("last question:" + lastQuestion);
-      return navigate(`/primary/${player.playerID}/${thisRoundCurrentQuestion.id}`, { state: { session: session, player: player, playerArray: playerArray, firstRound: firstRound, lastQuestion: lastQuestion } });
+      return navigate(`/primary/${player.playerID}/${thisRoundCurrentQuestion.id}`, { state: { session: session, player: player, playerArray: currentPlayerArray, firstRound: firstRound, lastQuestion: lastQuestion } });
     }
         
   }
@@ -67,9 +68,9 @@ const AdminViewPromptPage = () => {
   // Navigate to the game end screen
   const navigateToGameEnd = () => {
       if (admin) {
-          navigate(`/end/${admin}`, { state: { admin, session, playerArray} });
+          navigate(`/end/${admin}`, { state: { admin, session, playerArray: currentPlayerArray} });
         } else if (player) {
-          navigate(`/end/${player.playerID}`, { state: { admin, session, player, playerArray} });
+          navigate(`/end/${player.playerID}`, { state: { admin, session, player, playerArray: currentPlayerArray} });
         }
   }
   // Skips the current question, emitting an event to remove it from the pool and get a new one after first round
@@ -306,6 +307,17 @@ useEffect(() => {
 
     return () => socket.off("session_ended");
   }, [socket, session, navigate]);
+
+  //Updates player list in real time  (in the case that players leave)
+  useEffect(() => {
+    socket.on("get_player_array", (newPlayersList) => {
+      setCurrentPlayerArray(newPlayersList);
+    });
+    return () => {
+      socket.off("get_player_array");
+  };
+  
+  }, [socket]);
 
 
   //UI based on round and user role

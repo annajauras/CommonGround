@@ -7,10 +7,14 @@ const { Socket } = require('dgram');
 
 app.use(cors());
 
+require('dotenv').config();
+
+const PORT = process.env.PORT || 3001;
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: CLIENT_URL,
         methods: ["GET", "POST"],
     }
 });
@@ -20,8 +24,7 @@ const sessionsQuestions = {}; //Initialization of Object to contain available qu
 const sessionAgreed = {}; //Initialization of Object to track agreed players per session
 const sessionDisagreed = {}; //Initialization of Object to track disagreed players per session
 const sessionGroups = {}; //Initialization of Object contains status of groups who have finished answering follow up question
-
-
+const admins = {};; //Initialization of Object contains admins for all sessions
 io.on("connection", (socket) => {
     console.log(`User connected ${socket.id}`);
 
@@ -32,6 +35,7 @@ io.on("connection", (socket) => {
         // if the session does not exist yet, create empty array as value
         if (!sessions[sessionId]) {
             sessions[sessionId] = [];
+            admins[sessionId] = socket.id
         }
         console.log(`User with id ${socket.id} has joined session ${sessionId}.`);
         //send back array with all players in session
@@ -252,6 +256,7 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         // removes player from player list upon disconnect
         for (const sessionId in sessions) {
+
             // Remove player from sessions
             sessions[sessionId] = sessions[sessionId].filter(player => player.playerID !== socket.id);
             io.in(sessionId).emit("get_player_array", sessions[sessionId]);
@@ -292,9 +297,24 @@ io.on("connection", (socket) => {
             }
             console.log("Player disconnected", socket.id);
             console.log(sessions);
+
+            if (admins[sessionId] === socket.id) {
+                // Admin is leaving, find a new admin
+                console.log(`Admin ${socket.id} left session ${sessionId}`);
+                
+                
+                    io.to(sessionId).emit("session_ended", sessionId);
+                    console.log(`Session ${sessionId} ended due to no available admin.`);
+                    delete sessions[sessionId];
+                    delete admins[sessionId];
+                    delete sessionAgreed[sessionId];
+                    delete sessionDisagreed[sessionId];
+                    delete sessionsQuestions[sessionId];
+                    delete sessionGroups[sessionId];
+            }
         }
     });
 });
 
-server.listen(3001, () => {console.log('SERVER RUNNING')});
+server.listen(PORT, () => {console.log('SERVER RUNNING')});
 

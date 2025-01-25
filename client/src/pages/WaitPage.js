@@ -16,6 +16,7 @@ const WaitPage = () => {
   const [agreeDone, setAgreeDone] = useState(agreeGroupHere);
   const [disagreeDone, setDisagreeDone] = useState(disagreeGroupHere);
   const [bothGroupsHere, setBothGroupsHere] = useState(false);
+  const [currentPlayerArray, setCurrentPlayerArray] = useState(playerArray);
   //Variables containing follow up question being answered
   const followUpAgree = agreeResponses.find(
     (response) => response.id === question.id
@@ -91,9 +92,9 @@ const WaitPage = () => {
       //Navigation if no more questions
       if (lastQuestion) {
         if (admin) {
-          navigate(`/end/${admin}`, { state: { admin, session, playerArray, firstRound: false, availableQuestionsThisRound, nextRoundQuestion, lastQuestion } });
+          navigate(`/end/${admin}`, { state: { admin, session, playerArray: currentPlayerArray, firstRound: false, availableQuestionsThisRound, nextRoundQuestion, lastQuestion } });
         } else if (player) {
-          navigate(`/end/${player.playerID}`, { state: { admin, session, player, playerArray } });
+          navigate(`/end/${player.playerID}`, { state: { admin, session, player, playerArray: currentPlayerArray } });
         }
       } 
         else {
@@ -102,28 +103,39 @@ const WaitPage = () => {
       
           if (admin) {
             navigate(`/${admin}/admin`, { 
-              state: { admin, session, playerArray, firstRound: false, availableQuestionsThisRound, nextRoundQuestion, lastQuestion} 
+              state: { admin, session, playerArray: currentPlayerArray, firstRound: false, availableQuestionsThisRound, nextRoundQuestion, lastQuestion} 
             });
           } else if (player) {
             navigate(`/${player.playerID}/admin`, { 
-              state: { session, player, playerArray, firstRound: false } 
+              state: { session, player, playerArray: currentPlayerArray, firstRound: false } 
             });
           }
         }
     }
   
-  }, [bothGroupsHere, agreeDone, disagreeDone, admin, player, navigate, session, playerArray, firstRound, availableQuestionsThisRound, nextRoundQuestion, lastQuestion]);
+  }, [bothGroupsHere, agreeDone, disagreeDone, admin, player, navigate, session, currentPlayerArray, firstRound, availableQuestionsThisRound, nextRoundQuestion, lastQuestion]);
+
+    //Updates player list in real time  (in the case that players leave)
+    useEffect(() => {
+      socket.on("get_player_array", (newPlayersList) => {
+        setCurrentPlayerArray(newPlayersList);
+      });
+      return () => {
+        socket.off("get_player_array");
+    };
+    }, [socket]);
   
-  //Checks if session has ended due to players leaving the game
+  //Checks if session has ended due to players/admin leaving the game
   useEffect(() => {
     socket.on("session_ended", (endedSessionId) => {
       if (endedSessionId === session) {
         // Show a confirmation dialog; navigate only if the user clicks "OK"
-        if (window.confirm("The session ", endedSessionId," has ended.  Click OK to return to the home page.")) {
+        if (window.confirm("The session has ended. Click OK to return to the home page.")) {
           navigate("/");
         }
       }
     });
+    
 
     return () => socket.off("session_ended");
   }, [socket, session, navigate]);
